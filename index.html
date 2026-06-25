@@ -340,11 +340,31 @@
         .day-number { font-weight: 500; line-height: 1; }
         .day-icons {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 1px;
             margin-top: 2px;
-            font-size: 0.85rem;
+        }
+        .day-icon-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.65rem;
             line-height: 1;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            padding: 1px 3px;
+            border-radius: 4px;
+        }
+        .day-icon-row.icon-birthday {
+            background: #d53f8c;
+            color: white;
+        }
+        .day-icon-row.icon-anniversary {
+            background: #b7791f;
+            color: white;
+        }
+        .day-icon-count {
+            font-size: 0.55rem;
+            font-weight: 800;
         }
         .calendar-tooltip {
             position: absolute;
@@ -762,8 +782,12 @@
                 let icons = '';
                 let tooltip = '';
                 if (hasEvent) {
-                    const iconList = events.map(e => (e.type || 'birthday') === 'anniversary' ? '&#128141;' : '&#127874;');
-                    icons = `<span class="day-icons">${iconList.join('')}</span>`;
+                    const bdayCount = events.filter(e => (e.type || 'birthday') === 'birthday').length;
+                    const annivCount = events.filter(e => e.type === 'anniversary').length;
+                    let iconRows = [];
+                    if (bdayCount > 0) iconRows.push(`<span class="day-icon-row icon-birthday">${bdayCount > 1 ? '<span class="day-icon-count">' + bdayCount + '</span>' : ''}&#127874;</span>`);
+                    if (annivCount > 0) iconRows.push(`<span class="day-icon-row icon-anniversary">${annivCount > 1 ? '<span class="day-icon-count">' + annivCount + '</span>' : ''}&#128141;</span>`);
+                    icons = `<span class="day-icons">${iconRows.join('')}</span>`;
                     const names = events.map(e => {
                         const type = (e.type || 'birthday') === 'anniversary' ? '&#128141;' : '&#127874;';
                         return `${type} ${e.name}`;
