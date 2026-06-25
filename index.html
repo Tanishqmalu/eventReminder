@@ -304,6 +304,7 @@
             position: relative;
             cursor: default;
             transition: background 0.15s, transform 0.15s;
+            overflow: hidden;
         }
         .calendar-grid .day-cell.other-month { color: #cbd5e0; }
         .calendar-grid .day-cell.today {
@@ -397,7 +398,9 @@
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
             font-size: 0.8rem;
             color: #718096;
         }
