@@ -319,13 +319,32 @@
             transform: scale(1.15);
             z-index: 2;
         }
+        .calendar-grid .day-cell.has-birthday {
+            background: rgba(237, 100, 166, 0.2);
+            border: 2px solid #ed64a6;
+        }
+        .calendar-grid .day-cell.has-anniversary {
+            background: rgba(236, 201, 75, 0.2);
+            border: 2px solid #ecc94b;
+        }
+        .calendar-grid .day-cell.has-both {
+            background: linear-gradient(135deg, rgba(237, 100, 166, 0.2), rgba(236, 201, 75, 0.2));
+            border: 2px solid #9f7aea;
+        }
+        .calendar-grid .day-cell.today.has-birthday,
+        .calendar-grid .day-cell.today.has-anniversary,
+        .calendar-grid .day-cell.today.has-both {
+            border: 2px solid white;
+            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.6);
+        }
         .day-number { font-weight: 500; line-height: 1; }
         .day-icons {
             display: flex;
             gap: 1px;
             margin-top: 2px;
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             line-height: 1;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
         .calendar-tooltip {
             position: absolute;
@@ -512,7 +531,15 @@
         @media (max-width: 900px) {
             .layout {
                 grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
             }
+            .right-col { order: 1; }
+            .left-col { order: 2; }
+            .left-col .card:nth-child(1) { order: 3; }
+            .left-col .card:nth-child(2) { order: 1; }
+            .left-col .card:nth-child(3) { order: 2; }
+            .left-col { display: flex; flex-direction: column; }
             .calendar-card { position: static; }
         }
         @media (max-width: 500px) {
@@ -744,7 +771,16 @@
                     tooltip = `<span class="calendar-tooltip">${names}</span>`;
                 }
 
-                html += `<div class="day-cell${isToday ? ' today' : ''}${hasEvent ? ' has-event' : ''}">
+                let eventClass = '';
+                if (hasEvent) {
+                    const hasBday = events.some(e => (e.type || 'birthday') === 'birthday');
+                    const hasAnniv = events.some(e => e.type === 'anniversary');
+                    if (hasBday && hasAnniv) eventClass = ' has-both';
+                    else if (hasAnniv) eventClass = ' has-anniversary';
+                    else eventClass = ' has-birthday';
+                }
+
+                html += `<div class="day-cell${isToday ? ' today' : ''}${hasEvent ? ' has-event' : ''}${eventClass}">
                     ${tooltip}
                     <span class="day-number">${d}</span>
                     ${icons}
